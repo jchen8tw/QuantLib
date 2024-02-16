@@ -117,6 +117,16 @@ if (QL_ENABLE_DEFAULT_WARNING_LEVEL)
     endif()
 endif()
 
+if(MSVC)
+    foreach(flag_var
+        CMAKE_CXX_FLAGS CMAKE_CXX_FLAGS_DEBUG CMAKE_CXX_FLAGS_RELEASE
+        CMAKE_CXX_FLAGS_MINSIZEREL CMAKE_CXX_FLAGS_RELWITHDEBINFO)
+        STRING (REGEX REPLACE "/RTC(su|[1su])" "" ${flag_var} "${${flag_var}}")
+    endforeach(flag_var)
+    add_compile_options(/MT /O2)
+endif()
+
+
 # Treat warnings on compile as errors
 if (QL_COMPILE_WARNING_AS_ERROR)
     # all compiler warnings as errors
@@ -252,6 +262,8 @@ if (QL_TAGGED_LAYOUT)
     set(CMAKE_MINSIZEREL_POSTFIX ${RELEASE_POSTFIX})
 endif()
 
+
+
 include(CTest)
 
 # extension subdirectories if they exist (hook for external projects)
@@ -268,6 +280,8 @@ endif()
 if (QL_BUILD_TEST_SUITE OR QL_BUILD_BENCHMARK)
     add_subdirectory(test-suite)
 endif()
+
+
 
 # CPack support (make package, make package_source)
 set(CPACK_PACKAGE_VERSION_MAJOR ${QUANTLIB_VERSION_MAJOR})
